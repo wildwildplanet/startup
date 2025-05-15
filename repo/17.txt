@@ -1,0 +1,20 @@
+1. File Structure:
+- assets/: static assets like images and data.
+- app/: entry point and TSX pages.
+- components/: reusable UI components organized by feature.
+- hooks/: custom React hooks.
+- styles/: shared style definitions.
+- types/: TypeScript types and interfaces.
+- utils/: utility functions.
+- lib/: core business logic and Supabase wrappers.
+- scripts/: database and build scripts.
+- .expo, web-build: Expo and web build output directories.
+- Configuration files: package.json, tsconfig.json, babel.config.js, metro.config.js, webpack.config.js, app.json.
+
+2. Supabase Connection:
+The project uses @supabase/supabase-js. The client is initialized in lib/supabase/supabaseClient.ts with the URL https://fjhreuzbsbgbpmiqeuty.supabase.co and the anon key. It exports helper functions for common operations: fetchStartups, fetchLeaderboard, fetchUserProfile, fetchUserPortfolio, makeInvestment, and testConnection. A SupabaseProvider component wraps the React tree, using getSession and onAuthStateChange to manage the user session in context. Components import the Supabase client or helper functions to perform queries, RPC calls (e.g. start_negotiation), and auth actions (signIn, signUp, signOut).
+
+3. App Workflow:
+On launch, App.tsx renders the SupabaseProvider, then the main navigation. If the user is not signed in, the auth flow prompts for credentials. After signing in, useStore loads the user profile and portfolio using supabaseClient functions. The home screen displays a list of startups and a leaderboard fetched from Supabase. Users can select a startup to view details and open the InvestmentModal to invest or start negotiations via supabase.rpc calls. State is managed locally with Zustand. Real-time updates (subscriptions) refresh data automatically. All CRUD interactions go through the shared supabaseClient instance. Database schema and initial data population are handled via scripts/debug-database.js and SQL scripts in scripts/. For development, test-supabase.sh helps verify connectivity.
+
+This file captures the overall structure, Supabase setup, and main workflow for future reference.

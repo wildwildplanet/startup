@@ -1,0 +1,263 @@
+# Startup Pitch Challenge App Flow
+
+## Database Schema & Connection
+
+The app connects to a Supabase database with the following schema:
+
+### Tables:
+1. **startups**
+   - id: string (primary key)
+   - name: string
+   - logo: string (URL)
+   - askAmount: number
+   - valuation: number
+   - roi: number
+   - problem: string
+   - solution: string
+   - fundingUse: string
+   - revenue: string
+   - growth: string
+   - team: string
+   - teamSize: number
+   - market: string
+   - traction: string
+   - risks: string
+   - stage: string (e.g., "Seed", "Series A")
+   - industry: string
+   - riskLevel: string
+   - created_at: timestamp
+   - country: string
+   - business_model: string
+   - advantage: string
+   - risk_factors: string
+   - exit_strategy: string
+   - milestones: string
+   - funding_allocation: string
+   - how_funds_will_be_used: string
+   - Additional fields: tagline, description, market_size, etc.
+
+2. **user_profiles**
+   - id: string (primary key, references auth.users)
+   - username: string
+   - email: string
+   - name: string
+   - avatar: string
+   - level: number
+   - experiencePoints: number
+   - experienceToNextLevel: number
+   - rank: string
+   - portfolioValue: number
+   - cashAvailable: number
+   - investments_count: number
+   - successful_exits: number
+   - failed_exits: number
+
+3. **investments**
+   - id: string (primary key)
+   - user_id: string (foreign key to user_profiles)
+   - startup_id: string (foreign key to startups)
+   - amount: number
+   - equity: number
+   - status: string (active, exited, failed)
+   - investment_date: timestamp
+   - currentValue: number (calculated)
+   - exit_date: timestamp
+   - exit_value: number
+   - exit_type: string (acquisition, IPO, failure)
+   - return_multiplier: number
+
+4. **achievements**
+   - id: string (primary key)
+   - name: string
+   - description: string
+   - icon: string
+   - requirement: string
+   - requirement_value: number
+   - xp_reward: number
+
+5. **user_achievements**
+   - id: string (primary key)
+   - user_id: string (foreign key to user_profiles)
+   - achievement_id: string (foreign key to achievements)
+   - date_earned: timestamp
+   - progress: number
+
+6. **negotiations**
+   - id: string (primary key)
+   - user_id: string (foreign key to user_profiles)
+   - startup_id: string (foreign key to startups)
+   - user_offer_amount: number
+   - user_requested_equity: number
+   - startup_counter_amount: number
+   - startup_counter_equity: number
+   - status: string (pending, countered, accepted, rejected)
+   - created_at: timestamp
+   - updated_at: timestamp
+
+7. **market_conditions**
+   - id: string (primary key)
+   - date: timestamp
+   - overall_index: number
+   - tech_index: number
+   - healthcare_index: number
+   - finance_index: number
+   - consumer_index: number
+   - energy_index: number
+   - event_description: string
+   - affects_industries: string[]
+
+8. **events**
+   - id: string (primary key)
+   - title: string
+   - description: string
+   - type: string (market, startup, global)
+   - severity: number (1-5)
+   - industries_affected: string[]
+   - multiplier: number
+   - duration: number (days)
+   - probability: number
+
+### Connection:
+- The app uses the Supabase JavaScript client to connect to the database
+- Connection URL: https://fjhreuzbsbgbpmiqeuty.supabase.co
+- Authentication is handled via Supabase Auth with JWT tokens
+- AsyncStorage is used for session persistence on mobile devices
+
+## Application Flow
+
+### Authentication
+1. Users land on the index page which redirects to either:
+   - `/auth/login` if not authenticated
+   - `/tabs/home` if already authenticated
+2. The SupabaseProvider wraps the app and provides authentication context
+3. Login/signup forms authenticate users via Supabase Auth
+
+### Main App Flow
+1. **Home Screen** (`/tabs/home`):
+   - Tinder-style card swipe interface for browsing startups
+   - Users can swipe right to "invest" or left to "pass"
+   - Detailed startup information displayed on cards
+   - Both clicking "Invest" button and swiping right open the investment modal
+
+2. **Discover** (`/tabs/discover`):
+   - Alternative browsing interface for startups
+   - Filter and search functionality by industry, stage, and risk level
+
+3. **Portfolio** (`/tabs/portfolio`):
+   - Displays user's current investments
+   - Shows portfolio performance metrics and returns
+   - Detailed breakdown of each investment
+   - Exit options for mature investments
+
+4. **Leaderboard** (`/tabs/leaderboard`):
+   - Displays top users ranked by portfolio value
+   - Competitive element to encourage engagement
+   - Weekly and all-time rankings
+
+5. **Profile** (`/tabs/profile`):
+   - User profile information
+   - Achievements and stats
+   - Account settings
+   - Investment history and performance analytics
+
+6. **Market Conditions** (`/tabs/market`):
+   - Shows current market indices by industry
+   - Historical market performance charts
+   - Market events and their impact on investments
+
+### Investment Flow
+1. User views startup details
+2. User clicks "Invest" or swipes right
+3. Investment modal opens (`/modals/investment`)
+4. User selects investment amount using slider
+5. System calculates equity percentage based on valuation
+6. User can initiate negotiation or accept standard terms
+7. User confirms investment
+8. Investment is recorded in database
+9. User's cash is decreased, portfolio value updated
+10. Startup is moved to the user's portfolio
+11. User receives XP and potential achievements
+
+### Negotiation Flow
+1. User initiates negotiation with custom terms
+2. System calculates probability of counter-offer
+3. Startup may accept, reject, or counter
+4. If counter-offered, user can accept, reject, or counter again
+5. Negotiations conclude with either investment or rejection
+6. Successful negotiations increase user XP and potential rewards
+
+### Exit Flow
+1. For mature investments, exit options become available
+2. User can choose to hold, try acquisition, or attempt IPO
+3. System calculates success probability based on startup performance
+4. Exit results in either loss, moderate return, or significant gain
+5. Portfolio and cash values are updated accordingly
+6. User receives XP and potential achievements
+
+### Simulation Algorithms
+1. **Startup Performance**:
+   - Monthly performance updates
+   - Growth influenced by industry, market conditions, and random factors
+   - Performance affects valuation and exit potential
+
+2. **Exit Scenarios**:
+   - Success probability based on:
+     - Startup's performance history
+     - Market conditions
+     - Industry trends
+     - Startup maturity (time since investment)
+   - Return multiplier calculation:
+     - Base multiplier from startup's exit_multiplier
+     - Adjusted by market conditions
+     - Further adjusted by random variance
+     - Higher for IPO, lower for acquisition, negative for failure
+
+3. **Market Conditions Simulation**:
+   - Updated weekly with slight variations
+   - Occasional major shifts (booms/busts)
+   - Industry-specific trends
+   - Events that affect specific industries or the overall market
+
+### State Management
+- The app uses Zustand for state management
+- Main store defined in `lib/store/useStore.ts`
+- Stores user data, startups, portfolio information, and market conditions
+- Contains actions for login, logout, investments, negotiations, etc.
+- Mock data is provided for development when not connected to Supabase
+
+### Technical Architecture
+- Built with React Native + Expo
+- Uses Expo Router for navigation
+- React Native Paper for UI components
+- Linear gradients and animations for visual appeal
+- Responsive design for different screen sizes
+- Mobile-first but also works on web via react-native-web
+
+## Security Model
+- Row Level Security (RLS) policies:
+  - Anyone can view startups (public read access)
+  - Only authenticated users can make investments
+  - Users can only see and modify their own portfolio/investments
+  - Users can only interact with their own negotiations
+  - Leaderboard data is visible to all users but anonymized where appropriate
+
+## Key API Functions
+1. `fetchStartups()` - Retrieves startups with optional filtering
+2. `fetchStartupById(id)` - Gets detailed information for a specific startup
+3. `makeInvestment(startupId, amount)` - Creates a new investment
+4. `startNegotiation(startupId, offerAmount, equityRequested)` - Begins negotiation process
+5. `respondToCounterOffer(negotiationId, acceptOffer)` - Accepts or rejects counter offer
+6. `makeCounterOffer(negotiationId, newAmount, newEquity)` - Makes a counter to the startup's offer
+7. `fetchUserProfile()` - Gets the current user's profile information
+8. `fetchUserPortfolio()` - Gets the user's investments and portfolio stats
+9. `initiateExit(investmentId, exitType)` - Begins process of exiting an investment
+10. `fetchMarketConditions()` - Gets current market condition data
+11. `fetchLeaderboard()` - Gets the user rankings
+12. `fetchInvestmentHistory(investmentId)` - Gets historical performance data for charting
+13. `testConnection()` - Used for testing the Supabase connection
+
+## Development & Testing
+- Test functionality via `/test` route
+- Connection to Supabase is tested via simple queries
+- Mock data is provided for development environments
+- Server/client rendering handled appropriately 

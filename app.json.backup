@@ -1,0 +1,91 @@
+{
+  "expo": {
+    "scheme": "startup-pitch-challenge",
+    "jsEngine": "hermes",
+    "name": "startup-pitch-challenge",
+    "slug": "startup-pitch-challenge",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "jsEngine": "hermes",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.startuppitchchallenge",
+      "infoPlist": {
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "2fnua5tdw4.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "24t6a9zs8a.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "4fzdc2evr5.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "klf5c3pwp8.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "bd286hdw3g.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "5a6flpkh64.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "adnekmiaepc.skadnetwork"
+          }
+        ]
+      },
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-7154546074200074~9244732910"
+      }
+    },
+    "android": {
+      "jsEngine": "hermes",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.startuppitchchallenge",
+      "permissions": [],
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-7154546074200074~9244732910"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static",
+      "build": {
+        "babel": {
+          "include": [
+            "expo-router"
+          ]
+        }
+      }
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font",
+      "./unity-ads.config.plugin"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "29634e4f-99fd-4c11-a07a-36aa589acfe4"
+      }
+    }
+  }
+}
