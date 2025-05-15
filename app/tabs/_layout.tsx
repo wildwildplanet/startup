@@ -1,19 +1,48 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { useEffect } from 'react';
-import { useSegments } from 'expo-router';
+import { Platform } from 'react-native';
 import { Ionicons, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from 'react-native-paper';
 import { useStore } from '../../lib/store/useStore';
+
+// Dynamically import UnityAds to prevent errors in Expo Go
+let UnityAds: typeof import('react-native-unity-ads') | null = null;
+if (Platform.OS !== 'web') {
+  try {
+    UnityAds = require('react-native-unity-ads');
+  } catch (e) {
+    console.warn('Unity Ads not available:', e);
+  }
+}
 
 export default function TabsLayout() {
   const theme = useTheme();
   const simulateMarket = useStore(state => state.simulateMarket);
   const loadStartups = useStore(state => state.loadStartups);
-  const segments = useSegments();
-  console.log('🟢 TabsLayout segments:', segments);
 
-  // Load startup catalog and run GBM market simulation every 10 seconds
+  // Initialize Unity Ads
+  useEffect(() => {
+    const initUnityAds = async () => {
+      if (UnityAds?.initialize) {
+        try {
+          const gameId = Platform.OS === 'ios' ? '5838972' : '5838973';
+          await UnityAds.initialize(gameId, true);
+          console.log('Unity Ads initialized successfully');
+        } catch (error) {
+          console.error('Unity Ads initialization failed:', error);
+          // Retry initialization after delay
+          setTimeout(initUnityAds, 5000);
+        }
+      }
+    };
+
+    if (Platform.OS !== 'web') {
+      initUnityAds();
+    }
+  }, []);
+
+  // Load startup catalog and run GBM market simulation
   useEffect(() => {
     loadStartups();
     simulateMarket();
